@@ -6,6 +6,7 @@ export default function CommentCard({ comment, recipeId }) {
 
 
 	return(
+		
 		<div className="border-l pl-4 mb-4">
 			<p className="font-bold">{comment.user_name}</p>
 			<p className="mb-2">{comment.body}</p>

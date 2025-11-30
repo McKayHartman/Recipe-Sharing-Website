@@ -220,21 +220,23 @@ function buildCommentTree(rows) {
       }
     }
   });
-
+  console.log("Built comment tree:", roots);
   return roots;
 }
 
 // Get all comments for a recipe
 app.get('/api/comments/:recipeId', async (req, res) => {
   const { recipeId } = req.params;
+  console.log("testing");
+  console.log("recipeId:", req.params.recipeId);
 
   try {
     const result = await pool.query(
       `SELECT c.comment_id,
               c.recipe_id,
               c.parent_comment_id,
+			  c.user_id,
               c.body,
-              c.user_id,
               u.name AS user_name,
               c.created_at
        FROM comments c
@@ -247,8 +249,9 @@ app.get('/api/comments/:recipeId', async (req, res) => {
     res.json(buildCommentTree(result.rows));
 
   } catch (error) {
-    console.error("Error fetching comments:", error);
-    res.status(500).json({ error: "Error fetching comments" });
+    //console.error("Error fetching comments:", error);
+    //res.status(500).json({ error: "Error fetching comments" });
+	console.error("Error fetching comments:", error.stack);
   }
 });
 

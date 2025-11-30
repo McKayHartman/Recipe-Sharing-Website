@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 export default function RecipeCard({ recipe }) {
 	const [showComments, setShowComments] = useState(false);
+	console.log("Use State: " + showComments);
 
 	return (
 		<div className="recipe-card">
@@ -17,12 +18,16 @@ export default function RecipeCard({ recipe }) {
 			<p>{recipe.instructions}</p>
 			{/* Toggle comments section */}
 			{!showComments ? (
-				<button onClick={() => setShowComments(true)}>Show Comments</button>
+				<button onClick={() => {setShowComments(true); console.log("Show Comments clicked")}}>Show Comments</button>
 			) : (
-				<button onClick={() => setShowComments(false)}>Hide Comments</button>
+				<button onClick={() => {setShowComments(false); console.log("Hide Comments clicked")}}>Hide Comments</button>
 			)}
 			{showComments &&
-				<CommentsSection />
+				<CommentsSection 
+					recipe_id={recipe.recipe_id} 
+					setShowComments={setShowComments} 
+					showComments={showComments} 
+				/>
 			}
 			
 		</div>
