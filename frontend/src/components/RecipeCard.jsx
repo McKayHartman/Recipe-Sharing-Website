@@ -3,10 +3,10 @@ import React from 'react'
 import './RecipeCard.css'
 import CommentsSection from './CommentsSection'
 import { useState } from 'react'
+import GlobalRating from './GlobalRating'
 
 export default function RecipeCard({ recipe }) {
 	const [showComments, setShowComments] = useState(false);
-	console.log("Use State: " + showComments);
 
 	return (
 		<div className="recipe-card">
@@ -16,12 +16,21 @@ export default function RecipeCard({ recipe }) {
 			<p>Prep Time: {recipe.prep_minutes} minutes</p>
 			<h3>Instructions:</h3>
 			<p>{recipe.instructions}</p>
-			{/* Toggle comments section */}
+
+
+
+
+			
+			<GlobalRating 
+				recipe_id={recipe.recipe_id}
+			/>
+			{/* Show or Hide comments with a button*/}
 			{!showComments ? (
-				<button onClick={() => {setShowComments(true); console.log("Show Comments clicked")}}>Show Comments</button>
+				<button onClick={() => {setShowComments(true);}}>Show Comments</button>
 			) : (
-				<button onClick={() => {setShowComments(false); console.log("Hide Comments clicked")}}>Hide Comments</button>
+				<button onClick={() => {setShowComments(false);}}>Hide Comments</button>
 			)}
+			{/* Comments Section */}
 			{showComments &&
 				<CommentsSection 
 					recipe_id={recipe.recipe_id} 
@@ -29,6 +38,7 @@ export default function RecipeCard({ recipe }) {
 					showComments={showComments} 
 				/>
 			}
+			
 			
 		</div>
 	)

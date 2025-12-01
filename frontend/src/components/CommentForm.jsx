@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { use } from 'react';
 import Input from './Input';
 import axios from 'axios';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../context/UserContext';
+import Rating from './Rating';
 
 export default function CommentForm({ recipeId, parentId, onSubmit }) {
 	const [content, setContent] = useState('');
@@ -10,28 +11,26 @@ export default function CommentForm({ recipeId, parentId, onSubmit }) {
 
 
 	let user_id = null;
-		// try and pull the user id from the context
-		try {
-			// change loggedInUser number string to int
-			user_id = parseInt(loggedInUser, 10);
-			
-			console.log("parsed uid" + user_id);
 
-		} catch (error) { // if the user id does not come back, the user is not logged in
-			user_id = null;
-			console.error("Error getting user id from context:", error);
-			console.log("user is not logged in - defualting to null");
-		}
+	try {
+		// change loggedInUser number string to int
+		user_id = parseInt(loggedInUser, 10);
+
+	} catch (error) { // if the user id does not come back, the user is not logged in
+		user_id = null;
+		console.error("Error getting user id from context:", error);
+		console.log("user is not logged in - defualting to null");
+	}
 
 	async function handleSubmit(e) {
 		console.log("Submitting comment for recipeId:", recipeId, "parentId:", parentId);
 		e.preventDefault();
 
-		
+		const normalizedParentId = parentId ?? null;
 
 		const comment = {
 			recipe_id: recipeId,
-			parent_comment_id: parentId,
+			parent_comment_id: normalizedParentId,
 			body: content,
 			user_id: user_id
 		};
@@ -51,6 +50,14 @@ export default function CommentForm({ recipeId, parentId, onSubmit }) {
 			onSubmit();
 		}
 	}
+
+	// when the componoent renders, check if the user is logged in and has rated the recipe before
+	// If they have, show their previous rating
+	
+
+	
+
+
 
 	return(
 		<div>
