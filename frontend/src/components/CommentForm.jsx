@@ -6,6 +6,7 @@ import { UserContext } from '../context/UserContext';
 import Rating from './Rating';
 
 export default function CommentForm({ recipeId, parentId, onSubmit }) {
+	console.log("CommentForm props - recipeId:", recipeId, " parentId:", parentId);
 	const [content, setContent] = useState('');
 	let {loggedInUser} = useContext(UserContext);
 

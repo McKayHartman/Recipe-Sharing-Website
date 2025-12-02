@@ -17,7 +17,7 @@ export default function Navbar() {
 		navigate('/login');
 	}
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav className="bg-white text-black p-4 fixed z-50 shadow-md top-0 w-full">
       <h1 className="text-xl font-bold">Recipe Website</h1>
 	  <div>
 		{/* Navigation links */}
@@ -26,7 +26,9 @@ export default function Navbar() {
 		{!loggedInUser && <a href="/login" className="mr-4 hover:underline">Login</a>}
 		{!loggedInUser && <a href="/create-account" className="mr-4 hover:underline">Create Account</a>}
 		{loggedInUser && <a href="/my-recipes" className='mr-4 hover:underline'> My Recipes</a>}
+		{loggedInUser && <a href="/create-recipe" className='mr-4 hover:underline'>Create a Recipe</a>}
 		{loggedInUser && <button onClick={handleLogout}>Logout</button>}
+
 	  </div>
 	  
     </nav>

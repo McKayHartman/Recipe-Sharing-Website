@@ -23,7 +23,7 @@ export default function MyRecipes(){
 
 
 	return(
-		<div>
+		<div className='pt-20'>
 			<ul>
 				{userRecipes.map(recipe => (
 					<li key={recipe.recipe_id}>

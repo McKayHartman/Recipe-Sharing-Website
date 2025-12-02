@@ -19,6 +19,8 @@ export default function CreateAccount() {
 		username,
 		password
 	}
+	
+
 
 	async function handleSubmit(){
 		// e.preventDefault();
@@ -30,6 +32,9 @@ export default function CreateAccount() {
 		} else {
 			try{
 				console.log("creating account", account);
+
+			
+
 				const response = await axios.post('api/create-account', account);
 				console.log("account created");
 				navigate('/login')
@@ -47,8 +52,7 @@ export default function CreateAccount() {
 	}
 
 	return (
-		<div>
-			<h1>Create Account Page</h1>
+		<div className="pt-20">
 			{errorMessage && <h3 class="errorMessage">{errorMessage}</h3>}
 			<form  className="max-w-md">
 				<label>

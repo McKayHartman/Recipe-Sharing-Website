@@ -8,6 +8,8 @@
 import express from 'express';
 import { pool } from './db.js';
 import cors from 'cors';
+import bcrypt from 'bcryptjs'
+import multer from 'multer'
 
 import path from 'path';
 const __dirname = path.resolve();
@@ -23,6 +25,22 @@ const PORT = 3000; // Express server port
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+
+
+// Storage for image uploads using multer
+// images uploaded will be stored on server in /backend/uploads
+const storage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		cb(null, 'uploads/');
+	},
+	filename: function(req, file, cb) {
+		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+		cb(null, uniqueSuffix + path.extname(file.originalname));
+	}
+});
+
+const upload = multer({ storage: storage });
 
 
 //////////////////// ROUTES ////////////////////
@@ -83,15 +101,27 @@ app.get('/api/users/:user_id/recipes', async (req, res) => {
 });
 
 // POST routes
-app.post('/api/recipes', async (req, res) => {
+app.post('/api/recipes', upload.single('image'), async (req, res) => {
   try {
-    const { user_id, title, description, instructions, servings, prep_minutes } = req.body;
+    const {
+      user_id,
+      title,
+      description,
+      instructions,
+      servings,
+      prep_minutes,
+      cuisine,
+      meal
+    } = req.body;
+
+    // If an image was uploaded, save its path
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const result = await pool.query(
-      `INSERT INTO recipes (user_id, title, description, instructions, servings, prep_minutes)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO recipes (user_id, title, description, instructions, servings, prep_minutes, cuisine, meal, image_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [user_id, title, description, instructions, servings, prep_minutes]
+      [user_id, title, description, instructions, servings, prep_minutes, cuisine, meal, imageUrl]
     );
 
     res.json(result.rows[0]);
@@ -100,6 +130,9 @@ app.post('/api/recipes', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// Serve images from backend/assets folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // DELETE routes
 // delete all recipes - for test only
@@ -117,6 +150,11 @@ app.delete('/api/recipes', async (req, res) => {
 
 app.post('/api/create-account', async (req, res) => {
 	const { username, email, password,} = req.body;
+
+	// encryption using bcrypt
+	const salt = await bcrypt.genSalt(10);
+	const hashedPassword = await bcrypt.hash(password, salt);
+
 	try {
 		// check if user with email already exists
 		const checkUser = await pool.query(
@@ -138,7 +176,7 @@ app.post('/api/create-account', async (req, res) => {
 
 		const result = await pool.query(
 			"INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *",
-			[username, email, password]
+			[username, email, hashedPassword]
 		);
 		res.json(result.rows[0]);
 		console.log("Account created successfully");
@@ -160,17 +198,27 @@ app.post('/api/login', async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
+		// check if user exists
 		const result = await pool.query(
-			"SELECT * FROM users WHERE email = $1 AND password = $2", [email, password]
+			"SELECT * FROM users WHERE email = $1",
+			[email]
 		);
 
 		if (result.rows.length === 0) {
-			console.log("No matching email and password");
-			return res.status(401).json({ error: 'Invalid email or password' });
-		} else {
-			console.log("User exists");
-			return res.status(200).json(result.rows[0]);
+			return res.status(401).json({ error: "Invalid email or password" }); // EMAIL DOES NOT EXIST
 		}
+		// if they do exist email to user
+		const user = result.rows[0]
+
+		const match = await bcrypt.compare(password, user.password); // compares the given and fetched (hashed) password
+
+		if (!match) {
+			return res.status(401).json({ error: "Invalid email or password" }); // EMAIL EXISTS, PASSWORD DOES NOT MATCH
+		}
+
+		console.log("User logged in: ", user.user_id);
+		return res.status(200).json({ user_id: user.user_id });
+		
 
 	} catch (error) {
 		console.error("Error on login post route", error);

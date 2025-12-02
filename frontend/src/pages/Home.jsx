@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom'
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../context/UserContext'
 import axios from 'axios'
+import Marquee from '../components/Marquee'
+import SearchBar from '../components/SearchBar'
+import AllRecipesList from '../components/AllRecipesList'	
 
 
 export default function Home() {
@@ -23,14 +26,22 @@ export default function Home() {
 	}, [loggedInUser]);
 
 	return (
-		<div>
-			<h1 className="text-3xl font-bold text-blue-700">Welcome to the Home Page!</h1>
-			<p>Welcome {userName}</p>
-			<Link className="text-xl font-bold hover:underline" to="/recipes">Go to Recipes</Link>
-			<br />
-			<Link className="text-xl font-bold hover:underline" to="/login">Go to Login</Link>
-			<br />
-			<Link className="text-xl font-bold hover:underline" to="/create-account">Go to Create Account</Link>
+		<div className='min-h-screen bg-fixed bg-center bg-cover' >
+			{/* background illsutration */}
+			<div className="h-[50vh] bg-fixed bg-center bg-cover relative flex justify-center items-center" style={{ backgroundImage: "url('../assets/backgrounds/homebg.jpg')" }}>
+			{/* centered in div */}
+			{/* Search Bar */}
+				<SearchBar 
+				
+				/>
+				{/* <div className='bg-white h-auto flex justify-center align-middle '> 
+					
+				</div> */}
+			</div>
+
+			<Marquee />
+			{/* Render list of recipes */}
+			<AllRecipesList />
 		</div>
 	)
 }

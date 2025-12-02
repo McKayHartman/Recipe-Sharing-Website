@@ -6,7 +6,6 @@ import { UserContext } from "../context/UserContext"
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
 
-
 // Full Login page
 // handleLogin happens inside of the try block of handleSubmit
 
@@ -56,8 +55,7 @@ export default function Login() {
 	}
 
 	return (
-		<div>
-			<h1>Login Page</h1>
+		<div className="pt-20">
 			{errorMessage && <p class="errorMessage">{errorMessage}</p>}
 			<form className="max-w-md">
 				<label>

@@ -7,10 +7,17 @@ import { FaStar } from 'react-icons/fa'
 
 export default function Rating({ recipe_id, user_id, prev_rating }) {
 	const { loggedInUser } = useContext(UserContext);
-	const [rating, setRating] = useState(0);
+	const [rating, setRating] = useState(prev_rating === -1 ? 0 : prev_rating);
 	const [hoverValue, setHoverValue] = useState(undefined);
 
 	const stars = Array(5).fill(0);
+	const displayValue = hoverValue || rating || 0;
+
+	useEffect(() => {
+		if(prev_rating !== -1) {
+			setRating(prev_rating);
+		}
+	}, [prev_rating]);
 
 	const colors = {
 		orange: "#e2b864ff",
@@ -53,7 +60,7 @@ export default function Rating({ recipe_id, user_id, prev_rating }) {
 				<FaStar
 					key={index}
 					size={24}
-					color={(hoverValue ?? rating ?? prev_rating) > index ? colors.orange : colors.grey}
+					color={displayValue > index ? colors.orange : colors.grey}
 					onClick={() => {handleClickStar(index + 1, prev_rating)}}
 					onMouseOver={() => {handleMouseOverStar(index + 1)}}
 					onMouseLeave={() => {handleMouseLeaveStar()}}

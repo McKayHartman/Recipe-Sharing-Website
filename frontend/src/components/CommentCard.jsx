@@ -10,20 +10,18 @@ export default function CommentCard({ comment, recipeId, onSubmit }) {
 
 	async function handleDeleteComment() {
 		// check if has children
-		console.log("handling delete on comment id:", comment.comment_id);
 		try {
 			const response = await axios.get(`/api/comments/${comment.comment_id}/replies`);
 			const replies = response.data;
-			console.log("Fetched replies for comment:", replies);
+
 			if (replies && replies.length > 0) {
 				// has child comments, cannot delete yet, must run handleDeleteChildComment for each child
 				for (const reply of replies) {
 					await handleDeleteChildComment(reply.comment_id);
 				}
-			} else {
-				// if not children, just delte
-				await axios.delete(`/api/comments/${comment.comment_id}`);
 			}
+			// always delete parent comment
+			await axios.delete(`/api/comments/${comment.comment_id}`);
 			// Refresh comments after deletion
 			onSubmit();
 		} catch (error) {
@@ -61,6 +59,16 @@ export default function CommentCard({ comment, recipeId, onSubmit }) {
 			<p className="font-bold">{comment.user_name}</p>
 			<p className="mb-2">{comment.body}</p>
 
+			{/* Check if it is the user's comment --  if so, let them delete it */}
+			{loggedInUser && parseInt(loggedInUser, 10) === comment.user_id && (
+				<button
+					className="text-red-500 hover:underline mb-2"
+					onClick={handleDeleteComment}
+				>	
+				Delete
+				</button>
+			)}
+			<br></br>
 			{/* Reply button - only show if user is logged in */}
 			{loggedInUser && (
 				<button
@@ -70,6 +78,9 @@ export default function CommentCard({ comment, recipeId, onSubmit }) {
 					Reply
 				</button>
 			)}
+			
+			
+			
 
 			{/* User reply form */}
 			{showReply && (
@@ -84,15 +95,8 @@ export default function CommentCard({ comment, recipeId, onSubmit }) {
 					/>
 				</div>
 			)}
-
-			{/* Check if it is the user's comment --  if so, let them delete it */}
-			<button
-				className="text-red-500 hover:underline mb-2"
-				onClick={handleDeleteComment}
-			>	
-			Delete
-			</button>
-
+			
+			
 			{/* Other user's replies in recursion*/}
 			{comment.replies && comment.replies.length > 0 && (
 				<div className="ml-4 mt-4">
