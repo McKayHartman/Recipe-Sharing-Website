@@ -25,6 +25,7 @@ export default function Home() {
 		if (loggedInUser) fetchUser();
 	}, [loggedInUser]);
 
+
 	return (
 		<div className='min-h-screen bg-fixed bg-center bg-cover' >
 			{/* background illsutration */}

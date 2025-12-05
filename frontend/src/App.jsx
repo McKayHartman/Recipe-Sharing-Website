@@ -20,7 +20,7 @@ export function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/recipes' element={<Recipes />} />
+        <Route path='/search' element={<Recipes />} />
         <Route path='/login' element={<Login />} />
         <Route path='/create-account' element={<CreateAccount />} />
         <Route path="/create-recipe" element={<CreateRecipe />} />
