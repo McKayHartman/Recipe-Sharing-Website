@@ -49,7 +49,33 @@ app.get('/', async (req, res) => {
 });
 
 
+app.get("/api/recipes", async (req, res) => {
+    const { search } = req.query;
 
+    try {
+        // If search exists -> do a filtered search
+        if (search) {
+            console.log("Search term:", search);
+
+            const result = await pool.query(
+                `SELECT * FROM recipes
+                 WHERE LOWER(title) LIKE LOWER($1)`,
+                [`%${search.toLowerCase()}%`]
+            );
+
+            return res.json(result.rows);
+        }
+
+        // Otherwise -> return ALL recipes
+        console.log("Returning all recipes");
+        const result = await pool.query(`SELECT * FROM recipes`);
+        return res.json(result.rows);
+
+    } catch (error) {
+        console.error("Failed to fetch recipes", error);
+        res.status(500).json({ error: "Server failed request" });
+    }
+});
 
 // Returns all recipes from the database
 app.get('/api/recipes', async (req, res) => {
@@ -138,6 +164,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.delete('/api/recipes/:recipe_id', async (req, res) => {
 	const { recipe_id } = req.params;
 	try {
+		
 		await pool.query(
 			`DELETE FROM recipes
 			WHERE recipe_id = $1`,
@@ -200,22 +227,6 @@ app.post('/api/create-account', async (req, res) => {
 	}
 });
 
-// Search routes
-app.get("/api/recipes", async (req, res) => {
-    const search = req.query.search || "";
-    try {
-        const result = await pool.query(
-            `SELECT * FROM recipes
-             WHERE LOWER(title) LIKE LOWER($1)`,
-            [`%${search}%`]
-        );
-
-        res.json(result.rows);
-    } catch (error) {
-        console.error("Failed to search", error);
-        res.status(500).json({ error: "Server failed search request" });
-    }
-});
 
 
 
