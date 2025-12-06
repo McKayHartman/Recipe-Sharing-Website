@@ -1,75 +1,78 @@
 import Input from "../components/Input"
-import React from "react"
-import { useState } from "react"
-import { useContext } from "react"
+import React, { useState, useContext } from "react"
 import { UserContext } from "../context/UserContext"
 import axios from 'axios'
 import { useNavigate } from "react-router-dom"
 
+
 // Full Login page
 // handleLogin happens inside of the try block of handleSubmit
 
+
 export default function Login() {
-	const { setLoggedInUser } = useContext(UserContext);
-	const navigate = useNavigate();
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [errorMessage, setErrorMessage] = useState("");
+  const { setLoggedInUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-	const loginInfo = {
-		email,
-		password
-	}
+  async function handleSubmit(e){
+    e.preventDefault();
 
-	// triggered when the submit button is clicked
-	async function handleSubmit(){
-		try{
-			console.log("attempting login", loginInfo);
-			const response = await axios.post('api/login', loginInfo);
-			console.log("Successful Login: ", response.data); // 2XX status expected
-			// login the user to their account based on user_id
-			handleLogin(response.data.user_id);
-		} catch(error){ // non 2XX status code
-			if (error.response) {
-      			switch (error.response.status) {
-        			case 401:
-          				console.log("No matching credentials found");
-						setErrorMessage("No matching credentials found: Email or password is incorrect.")
-          				break;
-        			case 500:
-          				console.log("Server error");
-          				break;
-       			 	default:
-          				console.log("Other error:", error.response.status);
-      			}
-			}
-		}
-	}
+    const loginInfo = { email, password };
 
-	function handleLogin(user_id){
-		// store user_id inside of context
-		setLoggedInUser(user_id);
-		console.log("User logged in to page using id: ", user_id);
-		navigate("/"); // route the user to the home page
+    try {
+      const response = await axios.post('api/login', loginInfo);
+      handleLogin(response.data.user_id);
+    } catch(error){
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            setErrorMessage("No matching credentials found: Email or password is incorrect.");
+            break;
+          default:
+            setErrorMessage("Login failed. Try again.");
+        }
+      }
+    }
+  }
 
-	}
+  function handleLogin(user_id){
+    setLoggedInUser(user_id);
+    navigate("/");
+  }
 
-	return (
-		<div className="pt-20">
-			{errorMessage && <p class="errorMessage">{errorMessage}</p>}
-			<form className="max-w-md">
-				<label>
-					Email:
-					<Input value={email} onChange={(e) => setEmail(e.target.value)} name="email" />
-				</label>
-				<br />
-				<label>
-					Password:
-					<Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password" />
-				</label>
-				<br />
-			</form>
-			<button type="submit" onClick={handleSubmit}>Login</button>
-		</div>
-	)
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Login</h2>
+
+        {errorMessage && <p className="errorMessage">{errorMessage}</p>}
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label>
+            Email
+            <Input 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              name="email"
+              type="email"
+            />
+          </label>
+
+          <label>
+            Password
+            <Input 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              name="password" 
+              type="password"
+            />
+          </label>
+
+          <button className="auth-button" type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  )
 }
