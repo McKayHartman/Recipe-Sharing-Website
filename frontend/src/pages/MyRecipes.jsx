@@ -1,20 +1,20 @@
 import react, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../context/UserContext'
-import RecipeCard from '../components/RecipeCard';
+import RecipeCard from '../components/RecipeCard'
 import axios from 'axios'
 
-export default function MyRecipes(){
+export default function MyRecipes() {
 	const { loggedInUser } = useContext(UserContext);
 	const [userRecipes, setUserRecipes] = useState([]);
 
-	// get reipes based on logged in user id
+	// get recipes based on logged in user id
 	useEffect(() => {
 		async function fetchRecipes() {
 			try {
 				const response = await axios.get(`/api/users/${loggedInUser}/recipes`);
 				setUserRecipes(response.data);
 				console.log(response.data);
-			}catch (error) {
+			} catch (error) {
 				console.error("Error fetching user recipes:", error);
 			}
 		}
@@ -22,9 +22,11 @@ export default function MyRecipes(){
 	}, [loggedInUser]);
 
 
-	return(
-		<div className='pt-20'>
-			<ul>
+	return (
+		<div className="recipes-page">
+			<h1 className="recipes-title">My Recipes</h1>
+
+			<ul className="recipes-list">
 				{userRecipes.map(recipe => (
 					<li key={recipe.recipe_id}>
 						<RecipeCard recipe={recipe} />
@@ -32,5 +34,5 @@ export default function MyRecipes(){
 				))}
 			</ul>
 		</div>
-	)
+	);
 }

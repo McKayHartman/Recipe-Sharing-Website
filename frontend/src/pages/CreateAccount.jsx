@@ -3,79 +3,89 @@ import axios from "axios"
 import Input from "../components/Input"
 import { useNavigate } from 'react-router-dom' 
 
-
-
 export default function CreateAccount() {
-	const navigate = useNavigate();
-	const [email, setEmail] = useState("");
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [repeatPassword, setRepeatPassword] = useState("");
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-	const [errorMessage, setErrorMessage] = useState("");
+  const account = { email, username, password };
 
-	const account = {
-		email,
-		username,
-		password
-	}
-	
+  async function handleSubmit() {
+    if (password !== repeatPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
 
+    try {
+      const response = await axios.post('api/create-account', account);
+      navigate('/login')
+    } catch (error) {
+      if (error.response) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage("Error Creating Account");
+      }
+    }
+  }
 
-	async function handleSubmit(){
-		// e.preventDefault();
+  return (
+    <div className="auth-page">
+      <div className="auth-card">
+        <h2 className="auth-title">Create Your Account</h2>
 
-		// check that the passwords match
-		if(password !== repeatPassword){
-			setErrorMessage("Passwords do not match");
-			return;
-		} else {
-			try{
-				console.log("creating account", account);
+        {errorMessage && <h3 className="errorMessage">{errorMessage}</h3>}
 
-			
+        <form className="auth-form">
+          <label>
+            Email:
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email address"
+            />
+          </label>
 
-				const response = await axios.post('api/create-account', account);
-				console.log("account created");
-				navigate('/login')
+          <label>
+            Username:
+            <Input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Your display name"
+            />
+          </label>
 
-				// Return to login page
-			} catch (error) {
-				if (error.response) {
-					setErrorMessage(error.response.data.error);
+          <label>
+            Password:
+            <Input
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              placeholder="Enter a safe password"
+            />
+          </label>
 
-				} else {
-					setErrorMessage("Error Creating Account");
-				}
-			}
-		}
-	}
+          <label>
+            Repeat Password:
+            <Input
+              value={repeatPassword}
+              onChange={(e) => setRepeatPassword(e.target.value)}
+              type="password"
+              placeholder="Repeat your password"
+            />
+          </label>
 
-	return (
-		<div className="pt-20">
-			{errorMessage && <h3 class="errorMessage">{errorMessage}</h3>}
-			<form  className="max-w-md">
-				<label>
-					Email:
-					<Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email address"/>
-				</label>
-
-				<label>
-					Username:
-					<Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Your display name"/>
-				</label>
-				
-				<label>
-					Password:
-					<Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter a safe password"/>
-				</label>
-
-				<label>
-					Repeat Password:
-					<Input value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} type="password" placeholder="Repeat your password"/>
-				</label>
-			</form>
-			<button type="submit" onClick={handleSubmit}>Create Account</button>
-		</div>
-	)
+          <button
+            type="submit"
+            className="auth-button"
+            onClick={handleSubmit}
+          >
+            Create Account
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
