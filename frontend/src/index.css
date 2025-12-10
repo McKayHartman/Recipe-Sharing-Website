@@ -1,17 +1,22 @@
-/* stylelint-disable at-rule-no-unknown */
+/* stylelint-disable */
 /* Tailwind directives processed by PostCSS + Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* stylelint-enable at-rule-no-unknown */
 
+@layer base {
+  body {
+    @apply font-sans;
+  }
+}
 
-button[type="submit"]{
-	border-radius: 5px;
-	background-color:#2563EB;
-	color: white;
-	border: none;
-	margin-top: 10px;
+button[type="submit"] {
+  border-radius: 5px;
+  background-color: #2563EB;
+  color: white;
+  border: none;
+  margin-top: 10px;
 }
 button[type="submit"]:hover {
   background-color: darkblue;
@@ -20,5 +25,5 @@ button[type="submit"]:hover {
 /* Text styling */
 
 .errorMessage {
-	color: red;
+  color: red;
 }

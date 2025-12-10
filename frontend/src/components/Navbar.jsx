@@ -35,7 +35,7 @@ export default function Navbar() {
 	}, [loggedInUser]);
 
   return (
-    <nav className="bg-gray-800 text-white p-4 fixed z-50 shadow-md top-0 w-full flex flex-row">
+    <nav className="bg-brown-800 text-white p-4 fixed z-50 shadow-md top-0 w-full flex flex-row">
 	{/* Left side */}
 	  <div className='flex-1'>
 		<h1 className="text-xl font-bold">Recipe Website</h1>

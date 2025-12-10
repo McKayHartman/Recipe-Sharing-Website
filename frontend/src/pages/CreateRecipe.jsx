@@ -11,6 +11,7 @@ export default function CreateRecipe() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [instructions, setInstructions] = useState("");
+	const [ingredients, setIngredients] = useState("")
 	const [servings, setServings] = useState("");
 	const [prepMinutes, setPrepMinutes] = useState("");
 	const [cuisine, setCuisine] = useState("");
@@ -55,6 +56,7 @@ export default function CreateRecipe() {
 		formData.append('user_id', loggedInUser);
 		formData.append('title', title);
 		formData.append('description', description);
+		formData.append('ingredients', ingredients);
 		formData.append('instructions', instructions);
 		formData.append('servings', servings);
 		formData.append('prep_minutes', prepMinutes);
@@ -73,6 +75,7 @@ export default function CreateRecipe() {
 			setTitle('');
 			setDescription('');
 			setInstructions('');
+			setIngredients("");
 			setServings('');
 			setPrepMinutes('');
 			setCuisine('');
@@ -99,17 +102,22 @@ export default function CreateRecipe() {
 				{/* Title */}
 				<label>
 					Recipe Title: 
-					<Input type="text" value={title} onChange={(e) => setTitle(e.target.value)}/>
+					<Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder='What did you make today?'/>
 				</label>
 				{/* Description */}
 				<label>
 					Description:
-						<Input type="text" value={description} onChange={(e) => setDescription(e.target.value)}/>
+						<Input type="text" tall height="180px" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Traditional cupcakes with light frosting..."/>
+				</label>
+				{/* Ingredients */}
+				<label>
+					Ingredients
+						<Input type="text" tall height="180px" value={ingredients} onChange={(e) => setIngredients(e.target.value)} placeholder='3 Cups of Flour, 2 Cups of Sugar...'/>
 				</label>
 				{/* Instructions */}
 				<label>
 					Instructions:
-					<Input type="text" value={instructions} onChange={(e) => setInstructions(e.target.value)}/>
+					<Input type="text" tall height="180px" value={instructions} onChange={(e) => setInstructions(e.target.value)} placeholder="Preheat oven to 350 degrees F..."/>
 				</label>
 				{/* Servings */}
 				<label>

@@ -7,6 +7,7 @@ import GlobalRating from './GlobalRating'
 import { useContext } from 'react'
 import { UserContext } from '../context/UserContext'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 
 export default function RecipeCard({ recipe, onDelete }) {
 	const [showComments, setShowComments] = useState(false);
@@ -25,55 +26,57 @@ export default function RecipeCard({ recipe, onDelete }) {
 	}
 
 	return (
-		<div className="recipe-card flex gap-4">
-			<div className='flex-shrink-0'>
-				{recipe.image_url && (
-					<img
-						src={`http://localhost:3000${recipe.image_url}`}
-						alt={recipe.title}
-						className='w-auto h-48 object-cover rounded mb-4 align'
-					/>
-				)}
-			</div>
+		<Link to={`/recipes/${recipe.recipe_id}`} className='block'> 
+			<div className="recipe-card flex gap-4 hover:shadow-lg cursor-pointer">
+				<div className='flex-shrink-0'>
+					{recipe.image_url && (
+						<img
+							src={`http://localhost:3000${recipe.image_url}`}
+							alt={recipe.title}
+							className='w-auto h-48 object-cover rounded mb-4 align'
+						/>
+					)}
+				</div>
 
-			<div className="flex-1">
-				<h2 className='text-xl font-bold'>{recipe.title}</h2>
-				<p>{recipe.description}</p>
-				<p>Servings: {recipe.servings}</p>
-				<p>Prep Time: {recipe.prep_minutes} minutes</p>
-				<h3>Instructions:</h3>
-				<p>{recipe.instructions}</p>
-			</div>
+				<div className="flex-1">
+					<h2 className='text-xl font-bold'>{recipe.title}</h2>
+					<p>{recipe.description}</p>
+					<p>Servings: {recipe.servings}</p>
+					<p>Prep Time: {recipe.prep_minutes} minutes</p>
+					<h3>Cuisine: {recipe.cuisine}</h3>
+					<p>{recipe.instructions}</p>
+				</div>
 
-			
+				
 
 
 
-			
-			<GlobalRating 
-				recipe_id={recipe.recipe_id}
-			/>
-			{/* Show or Hide comments with a button*/}
-			{!showComments ? (
-				<button onClick={() => {setShowComments(true);}}>Show Comments</button>
-			) : (
-				<button onClick={() => {setShowComments(false);}}>Hide Comments</button>
-			)}
-			{loggedInUser == recipe.user_id && (
-				<button className='text-red-600' onClick={handleDeleteRecipe}>
-					Delete Recipe
-				</button>
-			)}
-			{/* Comments Section */}
-			{showComments &&
-				<CommentsSection 
-					recipe_id={recipe.recipe_id} 
-					setShowComments={setShowComments} 
-					showComments={showComments} 
+				
+				<GlobalRating 
+					recipe_id={recipe.recipe_id}
 				/>
-			}
-			
-			
-		</div>
+				{/* Show or Hide comments with a button*/}
+				{!showComments ? (
+					<button onClick={() => {setShowComments(true);}}>Show Comments</button>
+				) : (
+					<button onClick={() => {setShowComments(false);}}>Hide Comments</button>
+				)}
+				{loggedInUser == recipe.user_id && (
+					<button className='text-red-600' onClick={handleDeleteRecipe}>
+						Delete Recipe
+					</button>
+				)}
+				{/* Comments Section */}
+				{showComments &&
+					<CommentsSection 
+						recipe_id={recipe.recipe_id} 
+						setShowComments={setShowComments} 
+						showComments={showComments} 
+					/>
+				}
+				
+				
+			</div>
+		</Link>
 	)
 }

@@ -137,18 +137,20 @@ app.post('/api/recipes', upload.single('image'), async (req, res) => {
       servings,
       prep_minutes,
       cuisine,
-      meal
+      meal,
+	  ingredients
     } = req.body;
 
     // If an image was uploaded, save its path
     const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const result = await pool.query(
-      `INSERT INTO recipes (user_id, title, description, instructions, servings, prep_minutes, cuisine, meal, image_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING *`,
-      [user_id, title, description, instructions, servings, prep_minutes, cuisine, meal, imageUrl]
-    );
+	`INSERT INTO recipes 
+	(user_id, title, description, instructions, servings, prep_minutes, cuisine, meal, image_url, ingredients)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+	RETURNING *`,
+	[user_id, title, description, instructions, servings, prep_minutes, cuisine, meal, imageUrl, ingredients]
+	);
 
     res.json(result.rows[0]);
   } catch (error) {

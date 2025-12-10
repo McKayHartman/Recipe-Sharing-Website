@@ -8,7 +8,7 @@ import Footer from './components/Footer'
 import CreateRecipe from './pages/CreateRecipe'
 import MyRecipes from './pages/MyRecipes'
 import MyAccount from './pages/MyAccount'
-
+import RecipeDetails from './pages/RecipeDetails'
 
 export function App() {
 
@@ -26,6 +26,7 @@ export function App() {
         <Route path="/create-recipe" element={<CreateRecipe />} />
         <Route path='/my-recipes' element={<MyRecipes />} />
         <Route path='/my-account' element={<MyAccount />} />
+        <Route path='/recipes/:id' element={<RecipeDetails />} />
       </Routes>
       
       </div>
